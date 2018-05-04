@@ -191,6 +191,9 @@ const run = async () =>{
 
   //Se inicia la aplicación, para que corra en el puerto provisto
     api.express.listen(port, (err) => {
+
+      console.log('SE CONECTOOO',mc);
+
       if (err) {
         return console.log(err)
       }
