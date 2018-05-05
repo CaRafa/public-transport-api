@@ -29,7 +29,7 @@ const run = async () =>{
     const parada = new ParadaRepo(db);
  
   //Puerto a usar para servir el backend de forma local
-    const port = 3001;
+    const port = 3000;
   
   //Creamos la función que será utilizada de middleware para manejar el caché en la aplicación
     
@@ -178,6 +178,7 @@ const run = async () =>{
         .get( async function(req, res){ //Operador para retornar todos los géneros disponibles
           
           //Se pide a la base de datos todos los géneros disponibles
+          console.log('se llamo al get de pardas');
           let result = await parada.getAll();
           console.log(result);
           //Una vez lista la búsqueda, se envían los géneros conseguidos devuelta
@@ -190,14 +191,17 @@ const run = async () =>{
 
 
   //Se inicia la aplicación, para que corra en el puerto provisto
-    api.express.listen(port, (err) => {
+    // api.express.listen(port, (err) => {
 
-      if (err) {
-        return console.log(err)
-      }
+    //   if (err) {
+    //     return console.log(err)
+    //   }
 
-      return console.log(`server is listening on http://localhost:${port}`)
-    });
+    //   return console.log(`server is listening on http://localhost:${port}`)
+    // });
+
+
+
 }
 
 
