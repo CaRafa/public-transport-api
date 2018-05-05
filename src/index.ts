@@ -14,7 +14,7 @@
 const run = async () =>{
 
   //Creamos la conexión con la BDD correspondiente
-  const mc = await MongoClient.connect('mongodb://publicTransport:1234@ds215380.mlab.com:15380/heroku_tzlnxnvb');
+  const mc = await MongoClient.connect('mongodb://heroku_tzlnxnvb:r12345@ds215380.mlab.com:15380/heroku_tzlnxnvb');
   const mongo: Db = mc.db('library');
   const db = {
     
@@ -191,8 +191,6 @@ const run = async () =>{
 
   //Se inicia la aplicación, para que corra en el puerto provisto
     api.express.listen(port, (err) => {
-
-      console.log('SE CONECTOOO',mc);
 
       if (err) {
         return console.log(err)
