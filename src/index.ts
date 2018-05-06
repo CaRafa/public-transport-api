@@ -3,8 +3,9 @@
   import * as mongodb from 'mongodb'
   import { GenreRepo } from './repositories/genre.repo';
   import { ParadaRepo } from './repositories/parada.repo';
+  import { RutaRepo } from './repositories/ruta.repo';
   import { Db, MongoClient } from 'mongodb';
-  import { Genre, Parada } from './models/library';
+  import { Genre, Parada, Ruta } from './models/library';
   import * as mcache from 'memory-cache';
 
 //Creamos el objeto api, que representará la API RESTful
@@ -14,12 +15,13 @@
 const run = async () =>{
 
   //Creamos la conexión con la BDD correspondiente
-  const mc = await MongoClient.connect('mongodb://publicTransport:1234@ds215380.mlab.com:15380/heroku_tzlnxnvb');
+  const mc = await MongoClient.connect('mongodb://localhost:27017/library');
   const mongo: Db = mc.db('library');
   const db = {
     
     Genres: mongo.collection<Genre>('genres'),
     Paradas: mongo.collection<Parada>('parada'),
+    Rutas: mongo.collection<Ruta>('ruta'),
 
   }
 
@@ -27,6 +29,7 @@ const run = async () =>{
    
     const genres = new GenreRepo(db);
     const parada = new ParadaRepo(db);
+    const ruta = new RutaRepo(db);
  
   //Puerto a usar para servir el backend de forma local
     const port = 3000;
@@ -143,7 +146,7 @@ const run = async () =>{
         .post(async function(req, res){ //Operador para crear un género
           //Si la data que se manda tiene todas las propiedades de un género, se procede
 
-          console.log('Pedido index',req.body);
+          console.log('POST parada',req);
 
           if(req.body.coordinates){
               let par: Parada;
@@ -163,7 +166,7 @@ const run = async () =>{
         
               //Se crea el género en la base de datos respectiva
               let result = await parada.create(par);
-        
+              console.log('LUEGO DEL CREATE',result)
               //Una vez lista la creación, se envía el género creado devuelta
               res.status(201).json({
                 message: 'Parada creada',
@@ -190,15 +193,57 @@ const run = async () =>{
         
 
 
+        api.express.route('/api/ruta')
+        .post(async function(req, res){
+          console.log('POST ruta',req);
+          if(req.body.route){
+              let route: Ruta;
+              if(req.body.title){
+                route =  {
+                  title: req.body.title,
+                  route: req.body.route,
+                };
+              }
+              //Sino, no se incluyen
+              else{
+                route =  {
+                  route : req.body.route,
+                };
+              }
+        
+              let result = await ruta.create(route);
+              console.log('LUEGO DEL CREATE',result)
+              //Una vez lista la creación, se envía el género creado devuelta
+              res.status(201).json({
+                message: 'Ruta creada',
+                route: result
+              });
+          }
+          //Si no se tiene la data necesaria para crear un género, se envía un mensaje de error
+          else{
+            res.status(422).json({message:'Missing parameters'});
+          } 
+        }).get( async function(req, res){ 
+          console.log('se llamo al get de pardas');
+          let result = await ruta.getAll();
+          console.log(result);
+          //Una vez lista la búsqueda, se envían los géneros conseguidos devuelta
+          res.status(200).json({
+            message: 'Rutas buscadas',
+            route: result
+          });
+        })
+
+
   //Se inicia la aplicación, para que corra en el puerto provisto
-    // api.express.listen(port, (err) => {
+    api.express.listen(port, (err) => {
 
-    //   if (err) {
-    //     return console.log(err)
-    //   }
+      if (err) {
+        return console.log(err)
+      }
 
-    //   return console.log(`server is listening on http://localhost:${port}`)
-    // });
+      return console.log(`server is listening on http://localhost:${port}`)
+    });
 
 
 
