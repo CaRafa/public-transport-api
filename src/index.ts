@@ -146,27 +146,26 @@ const run = async () =>{
         .post(async function(req, res){ //Operador para crear un género
           //Si la data que se manda tiene todas las propiedades de un género, se procede
 
-          console.log('POST parada',req);
+          console.log('POST parada',req.body);
 
           if(req.body.coordinates){
               let par: Parada;
-              //Si se enviaron además los links relevantes para el género, se incluyen
-              if(req.body.title){
+              if(req.body.title && req.body.description && req.body.type != null){
                 par =  {
                   title: req.body.title,
                   coordinates : req.body.coordinates,
+                  description : req.body.description,
+                  type:  req.body.type
                 };
               }
-              //Sino, no se incluyen
               else{
-                par =  {
-                  coordinates : req.body.coordinates,
-                };
+                par= {
+                  coordinates : req.body.coordinates
+                }
               }
-        
+            
               //Se crea el género en la base de datos respectiva
               let result = await parada.create(par);
-              console.log('LUEGO DEL CREATE',result)
               //Una vez lista la creación, se envía el género creado devuelta
               res.status(201).json({
                 message: 'Parada creada',
@@ -196,12 +195,14 @@ const run = async () =>{
         api.express.route('/api/ruta')
         .post(async function(req, res){
           console.log('POST ruta',req);
-          if(req.body.route){
+          if(req.body.route && req.body.title && req.body.description && req.body.type){
               let route: Ruta;
-              if(req.body.title){
+              if(req.body.title && req.body.description && req.body.type){
                 route =  {
                   title: req.body.title,
                   route: req.body.route,
+                  description: req.body.description,
+                  type: req.body.type,
                 };
               }
               //Sino, no se incluyen

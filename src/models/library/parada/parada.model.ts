@@ -2,7 +2,7 @@
 export interface Parada {
     _id?: string,
     title?: string,
-    type?: string,
+    type?: boolean,
     description?: string,
     coordinates?: any,
 
