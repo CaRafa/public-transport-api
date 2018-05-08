@@ -4,8 +4,10 @@
   import { GenreRepo } from './repositories/genre.repo';
   import { ParadaRepo } from './repositories/parada.repo';
   import { RutaRepo } from './repositories/ruta.repo';
+  import { TransporteRepo } from './repositories/transporte.repo';
+  import { ConductorRepo } from './repositories/conductor.repo';
   import { Db, MongoClient } from 'mongodb';
-  import { Genre, Parada, Ruta } from './models/library';
+  import {  Conductor, Genre, Parada, Ruta, Transporte } from './models/library';
   import * as mcache from 'memory-cache';
 
 //Creamos el objeto api, que representará la API RESTful
@@ -22,6 +24,8 @@ const run = async () =>{
     Genres: mongo.collection<Genre>('genres'),
     Paradas: mongo.collection<Parada>('parada'),
     Rutas: mongo.collection<Ruta>('ruta'),
+    Transportes: mongo.collection<Transporte>('transporte'),
+    Conductores: mongo.collection<Conductor>('conductor'),
 
   }
 
@@ -30,6 +34,8 @@ const run = async () =>{
     const genres = new GenreRepo(db);
     const parada = new ParadaRepo(db);
     const ruta = new RutaRepo(db);
+    const transporte = new TransporteRepo(db);
+    const conductor = new ConductorRepo(db);
  
   //Puerto a usar para servir el backend de forma local
     const port = 3000;
