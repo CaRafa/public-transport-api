@@ -2,7 +2,9 @@ export interface Conductor {
     _id?: string,
     name?: string,
     lastName?: string,
-    description?: string,
-    route?: any,
-
+    ci?: number,
+    transporte?: any,
+    licencia?:number,
+    fechaNac?:string,
+    tel?:string
 }

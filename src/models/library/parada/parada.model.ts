@@ -5,5 +5,5 @@ export interface Parada {
     type?: boolean,
     description?: string,
     coordinates?: any,
-
+    density?: string
 }

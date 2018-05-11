@@ -1,8 +1,9 @@
 export interface Transporte {
     _id?: string,
-    name?: string,
-    lastName?: string,
+    numero?: number,
     description?: string,
     route?: any,
-
+    modelo?: string,
+    year?: number,
+    type?: string
 }

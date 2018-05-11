@@ -161,7 +161,8 @@ const run = async () =>{
                   title: req.body.title,
                   coordinates : req.body.coordinates,
                   description : req.body.description,
-                  type:  req.body.type
+                  type:  req.body.type,
+                  density: req.body.density
                 };
               }
               else{
@@ -241,6 +242,89 @@ const run = async () =>{
           });
         })
 
+        api.express.route('/api/transporte')
+        .post(async function(req, res){
+          console.log('POST tranposte',req);
+          if(req.body.route ){
+              let tran: Transporte;
+              if(req.body.numero){
+                tran =  {
+                  numero: req.body.numero,
+                  description: req.body.description,
+                  modelo: req.body.modelo,
+                  year: req.body.year,
+                  route: req.body.route,
+                  type: req.body.type
+                };
+              }
+              //Sino, no se incluyen
+              else{
+                tran =  {
+                  route : req.body.route,
+                };
+              }
+        
+              let result = await transporte.create(tran);
+              console.log('LUEGO DEL CREATE',result)
+              //Una vez lista la creación, se envía el género creado devuelta
+              res.status(201).json({
+                message: 'Ruta creada',
+                tran: result
+              });
+          }
+          //Si no se tiene la data necesaria para crear un género, se envía un mensaje de error
+          else{
+            res.status(422).json({message:'Missing parameters'});
+          } 
+        }).get( async function(req, res){ 
+          console.log('GET TRANPORTE');
+          let result = await transporte.getAll();
+          console.log(result);
+          //Una vez lista la búsqueda, se envían los géneros conseguidos devuelta
+          res.status(200).json({
+            message: 'transportes buscados',
+            transporte: result
+          });
+        })
+
+  
+        api.express.route('/api/conductor')
+        .post(async function(req, res){
+          console.log('POST conductor',req.body);
+          if(req.body.ci ){
+                let con: Conductor;
+                con =  {
+                  name: req.body.name,
+                  lastName: req.body.lastName,
+                  ci: req.body.ci,
+                  transporte: req.body.tran,
+                  licencia: req.body.licencia,
+                  fechaNac: req.body.fN,
+                  tel: req.body.tel
+                };
+              
+              let result = await conductor.create(con);
+              console.log('LUEGO DEL CREATE',result)
+              //Una vez lista la creación, se envía el género creado devuelta
+              res.status(201).json({
+                message: 'Ruta creada',
+                con: result
+              });
+          }
+          //Si no se tiene la data necesaria para crear un género, se envía un mensaje de error
+          else{
+            res.status(422).json({message:'Missing parameters'});
+          } 
+        }).get( async function(req, res){ 
+          console.log('GET Conductores');
+          let result = await conductor.getAll();
+          console.log(result);
+          //Una vez lista la búsqueda, se envían los géneros conseguidos devuelta
+          res.status(200).json({
+            message: 'conductores buscados',
+            conductor: result
+          });
+        })
 
   //Se inicia la aplicación, para que corra en el puerto provisto
     api.express.listen(port, (err) => {
