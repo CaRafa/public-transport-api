@@ -6,5 +6,7 @@ export interface Conductor {
     transporte?: any,
     licencia?:number,
     fechaNac?:string,
-    tel?:string
+    tel?:string,
+    horario?: any,
+    status?:boolean
 }

@@ -5,5 +5,6 @@ export interface Transporte {
     route?: any,
     modelo?: string,
     year?: number,
-    type?: string
+    type?: string, 
+    placa?: string
 }
