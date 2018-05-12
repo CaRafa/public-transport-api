@@ -5,5 +5,6 @@ export interface Ruta {
     type?: string,
     description?: string,
     route?: any,
-
+    distance?:any,
+    paradas?:any
 }

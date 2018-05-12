@@ -210,6 +210,8 @@ const run = async () =>{
                   route: req.body.route,
                   description: req.body.description,
                   type: req.body.type,
+                  distance: req.body.distance,
+                  paradas: req.body.paradas
                 };
               }
               //Sino, no se incluyen
