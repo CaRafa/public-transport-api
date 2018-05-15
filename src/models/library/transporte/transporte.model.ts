@@ -4,7 +4,8 @@ export interface Transporte {
     description?: string,
     route?: any,
     modelo?: string,
-    year?: number,
+    year?: string,
     type?: string, 
-    placa?: string
+    placa?: string,
+    t_type?: string
 }

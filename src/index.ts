@@ -257,7 +257,8 @@ const run = async () =>{
                   year: req.body.year,
                   route: req.body.route,
                   type: req.body.type,
-                  placa: req.body.placa
+                  placa: req.body.placa,
+                  t_type: req.body.t_type
                 };
               }
               //Sino, no se incluyen
@@ -336,7 +337,7 @@ const run = async () =>{
           //Si no se tiene ningún campo disponible con el que actualizar, se retorna un mensaje de error
 
           console.log('LLEGA UNA LLAMADA', req.body , req.params.conductor_id)
-          if(!req.body.horario){
+          if(!req.body.horario && req.body.data == false){
               res.status(422).json({message:'Missing parameters'});
             }
           //Si no, se puede proseguir
@@ -344,16 +345,32 @@ const run = async () =>{
             //Se busca el género a actualizar, para encontrar las diferencias
             let old: Conductor = await conductor.get(req.params.conductor_id);
 
-            //Se construye el género con las características viejas y las características nuevas
-            if(req.body.horario){
-              req.body.horario = typeof req.body.horario !== "undefined" ? req.body.horario : old.horario;
-            }
-            let cond: Conductor = {
+            console.log('Viejo data', old)
+            
+            let cond: Conductor
+            let result
+            console.log('TAMAno',req.body.tran.length);
+            if(req.body.data == false){
+             cond = {
               horario: typeof req.body.horario !== "undefined" ? req.body.horario : old.horario
             };
+          
+             result = await conductor.update(req.params.conductor_id, cond);
+          }else if(req.body.data == true ){
+              cond = {
+                tel:  req.body.tel !== undefined ? req.body.tel : old.tel,
+                transporte:  (req.body.tran.length > 0) ? req.body.tran : old.transporte,
+               status:  req.body.status !== undefined ? req.body.status : old.status}
 
+                console.log('data para modificar', cond)
+
+               result = await conductor.update(req.params.conductor_id, cond);
+            }
+            else{
+              result = 'nada'
+            }
             //Con el género actualizado en una variable, se inserta en la base de datos
-            let result = await conductor.update(req.params.conductor_id, cond);
+            
 
             //Se envía el género actualizado
             res.status(200).json({
@@ -363,6 +380,42 @@ const run = async () =>{
           } 
         })
 
+        //Rutas relacionadas con un género en particular 
+        api.express.route('/api/tranporte/:transporte_id')
+        .put(async function(req, res){ //Operador para actualizar un género
+          //Si no se tiene ningún campo disponible con el que actualizar, se retorna un mensaje de error
+
+          console.log('LLEGA UNA LLAMADA', req.body , req.params.transporte_id)
+          if(!req.body.des && !req.body.route){
+              res.status(422).json({message:'Missing parameters'});
+            }
+          //Si no, se puede proseguir
+          else{
+            //Se busca el género a actualizar, para encontrar las diferencias
+            let old: Transporte = await transporte.get(req.params.transporte_id);
+
+            console.log('Viejo data', old)
+            
+            let tran: Transporte
+            let result
+            console.log('TAMAno',req.body.route.length);
+            
+            tran = {
+              description:  req.body.description !== undefined ? req.body.description : old.description,
+              route:  (req.body.route.length > 0) ? req.body.route : old.route}
+
+               result = await transporte.update(req.params.transporte_id, tran);
+            
+            //Con el género actualizado en una variable, se inserta en la base de datos
+            
+
+            //Se envía el género actualizado
+            res.status(200).json({
+              message: 'transporte actualizado',
+              trans: result
+            });
+          } 
+        })
 
   //Se inicia la aplicación, para que corra en el puerto provisto
     api.express.listen(port, (err) => {
