@@ -3,10 +3,10 @@ export interface Conductor {
     name?: string,
     lastName?: string,
     ci?: number,
-    transporte?: any,
-    licencia?:number,
-    fechaNac?:string,
-    tel?:string,
-    horario?: any,
+    transports?: any,
+    license?:number,
+    birthday?:string,
+    cell?:string,
+    schedule?: any,
     status?:boolean
 }

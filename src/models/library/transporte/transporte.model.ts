@@ -1,11 +1,10 @@
 export interface Transporte {
     _id?: string,
-    numero?: number,
+    number?: number,
     description?: string,
     route?: any,
-    modelo?: string,
+    model?: string,
     year?: string,
-    type?: string, 
-    placa?: string,
-    t_type?: string
+    licPlate?: string,
+    vehType?: string
 }
