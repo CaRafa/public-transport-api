@@ -24,7 +24,6 @@ export class RutaRepo {
 
     public async create(data: Ruta): Promise <Ruta | null>{
 
-        console.log('Pedido',data);
         let insertion = await this.db.Rutas.insertOne(data);
         if(insertion.insertedId){
             return this.db.Rutas.findOne({'_id': new ObjectId(insertion.insertedId)});

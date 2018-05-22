@@ -24,7 +24,6 @@ export class TransporteRepo {
 
     public async create(data: Transporte): Promise <Transporte | null>{
 
-        console.log('Pedido',data);
         let insertion = await this.db.Transportes.insertOne(data);
         if(insertion.insertedId){
             return this.db.Transportes.findOne({'_id': new ObjectId(insertion.insertedId)});

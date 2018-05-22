@@ -152,7 +152,6 @@ const run = async () =>{
         .post(async function(req, res){ //Operador para crear un género
           //Si la data que se manda tiene todas las propiedades de un género, se procede
 
-          console.log('POST parada',req.body);
 
           if(req.body.coordinates){
               let par: Parada;
@@ -187,9 +186,7 @@ const run = async () =>{
         .get( async function(req, res){ //Operador para retornar todos los géneros disponibles
           
           //Se pide a la base de datos todos los géneros disponibles
-          console.log('se llamo al get de pardas');
           let result = await parada.getAll();
-          console.log(result);
           //Una vez lista la búsqueda, se envían los géneros conseguidos devuelta
           res.status(200).json({
             message: 'Paradas buscadas',
@@ -201,7 +198,6 @@ const run = async () =>{
 
         api.express.route('/api/ruta')
         .post(async function(req, res){
-          console.log('POST ruta',req);
           if(req.body.route && req.body.title && req.body.description && req.body.type){
               let route: Ruta;
               if(req.body.title && req.body.description && req.body.type){
@@ -222,7 +218,6 @@ const run = async () =>{
               }
         
               let result = await ruta.create(route);
-              console.log('LUEGO DEL CREATE',result)
               //Una vez lista la creación, se envía el género creado devuelta
               res.status(201).json({
                 message: 'Ruta creada',
@@ -234,9 +229,7 @@ const run = async () =>{
             res.status(422).json({message:'Missing parameters'});
           } 
         }).get( async function(req, res){ 
-          console.log('se llamo al get de pardas');
           let result = await ruta.getAll();
-          console.log(result);
           //Una vez lista la búsqueda, se envían los géneros conseguidos devuelta
           res.status(200).json({
             message: 'Rutas buscadas',
@@ -246,7 +239,6 @@ const run = async () =>{
 
         api.express.route('/api/transporte')
         .post(async function(req, res){
-          console.log('POST tranposte',req);
           if(req.body.route ){
               let tran: Transporte;
               if(req.body.numero){
@@ -269,7 +261,6 @@ const run = async () =>{
               }
         
               let result = await transporte.create(tran);
-              console.log('LUEGO DEL CREATE',result)
               //Una vez lista la creación, se envía el género creado devuelta
               res.status(201).json({
                 message: 'Ruta creada',
@@ -281,9 +272,7 @@ const run = async () =>{
             res.status(422).json({message:'Missing parameters'});
           } 
         }).get( async function(req, res){ 
-          console.log('GET TRANPORTE');
           let result = await transporte.getAll();
-          console.log(result);
           //Una vez lista la búsqueda, se envían los géneros conseguidos devuelta
           res.status(200).json({
             message: 'transportes buscados',
@@ -294,7 +283,6 @@ const run = async () =>{
   
         api.express.route('/api/conductor')
         .post(async function(req, res){
-          console.log('POST conductor',req.body);
           if(req.body.ci ){
                 let con: Conductor;
                 con =  {
@@ -309,7 +297,6 @@ const run = async () =>{
                 };
               
               let result = await conductor.create(con);
-              console.log('LUEGO DEL CREATE',result)
               //Una vez lista la creación, se envía el género creado devuelta
               res.status(201).json({
                 message: 'Ruta creada',
@@ -321,9 +308,7 @@ const run = async () =>{
             res.status(422).json({message:'Missing parameters'});
           } 
         }).get( async function(req, res){ 
-          console.log('GET Conductores');
           let result = await conductor.getAll();
-          console.log(result);
           //Una vez lista la búsqueda, se envían los géneros conseguidos devuelta
           res.status(200).json({
             message: 'conductores buscados',
@@ -336,7 +321,6 @@ const run = async () =>{
         .put(async function(req, res){ //Operador para actualizar un género
           //Si no se tiene ningún campo disponible con el que actualizar, se retorna un mensaje de error
 
-          console.log('LLEGA UNA LLAMADA', req.body , req.params.conductor_id)
           if(!req.body.horario && req.body.data == false){
               res.status(422).json({message:'Missing parameters'});
             }
@@ -345,11 +329,9 @@ const run = async () =>{
             //Se busca el género a actualizar, para encontrar las diferencias
             let old: Conductor = await conductor.get(req.params.conductor_id);
 
-            console.log('Viejo data', old)
             
             let cond: Conductor
             let result
-            console.log('TAMAno',req.body.tran.length);
             if(req.body.data == false){
              cond = {
               horario: typeof req.body.horario !== "undefined" ? req.body.horario : old.horario
@@ -361,8 +343,6 @@ const run = async () =>{
                 tel:  req.body.tel !== undefined ? req.body.tel : old.tel,
                 transporte:  (req.body.tran.length > 0) ? req.body.tran : old.transporte,
                status:  req.body.status !== undefined ? req.body.status : old.status}
-
-                console.log('data para modificar', cond)
 
                result = await conductor.update(req.params.conductor_id, cond);
             }
@@ -384,8 +364,6 @@ const run = async () =>{
         api.express.route('/api/tranporte/:transporte_id')
         .put(async function(req, res){ //Operador para actualizar un género
           //Si no se tiene ningún campo disponible con el que actualizar, se retorna un mensaje de error
-
-          console.log('LLEGA UNA LLAMADA', req.body , req.params.transporte_id)
           if(!req.body.des && !req.body.route){
               res.status(422).json({message:'Missing parameters'});
             }
@@ -394,11 +372,9 @@ const run = async () =>{
             //Se busca el género a actualizar, para encontrar las diferencias
             let old: Transporte = await transporte.get(req.params.transporte_id);
 
-            console.log('Viejo data', old)
             
             let tran: Transporte
             let result
-            console.log('TAMAno',req.body.route.length);
             
             tran = {
               description:  req.body.description !== undefined ? req.body.description : old.description,
@@ -413,6 +389,46 @@ const run = async () =>{
             res.status(200).json({
               message: 'transporte actualizado',
               trans: result
+            });
+          } 
+        })
+
+        //Update de la ruta
+        api.express.route('/api/ruta/:ruta_id')
+        .put(async function(req, res){ //Operador para actualizar un género
+          //Si no se tiene ningún campo disponible con el que actualizar, se retorna un mensaje de error
+
+          if(!req.body.title && !req.body.route){
+              res.status(422).json({message:'Missing parameters'});
+            }
+          //Si no, se puede proseguir
+          else{
+            //Se busca el género a actualizar, para encontrar las diferencias
+            let old: Ruta = await ruta.get(req.params.ruta_id);
+
+            
+            let rut: Ruta
+            let result
+            
+            rut = {
+              title:  req.body.title !== undefined ? req.body.title : old.title,
+              route:  (req.body.route.length > 0) ? req.body.route : old.route,
+              description:  req.body.description !== undefined ? req.body.description : old.description,
+              type:  req.body.type !== undefined ? req.body.type : old.type,
+              distance:  req.body.distance !== 0 && req.body.distance  !== undefined ? req.body.distance : old.distance,
+              paradas:  (req.body.paradas.length > 0) ? req.body.paradas : old.paradas
+              
+              }
+
+               result = await ruta.update(req.params.ruta_id, rut);
+            
+            //Con el género actualizado en una variable, se inserta en la base de datos
+            
+
+            //Se envía el género actualizado
+            res.status(200).json({
+              message: 'ruta actualizada',
+              ruta: result
             });
           } 
         })

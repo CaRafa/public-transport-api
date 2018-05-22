@@ -14,7 +14,6 @@ export class ConductorRepo {
     }
 
     public async getAll(): Promise <Conductor[] | null>{
-        console.log('LLAMADA A GET ALL');
         if(this.db){
             console.log('EXISTE BDD');
         }

@@ -14,7 +14,6 @@ export class ParadaRepo {
     }
 
     public async getAll(): Promise <Parada[] | null>{
-        console.log('LLAMADA A GET ALL');
         if(this.db){
             console.log('EXISTE BDD');
         }
@@ -24,7 +23,6 @@ export class ParadaRepo {
 
     public async create(data: Parada): Promise <Parada | null>{
 
-        console.log('Pedido',data);
         let insertion = await this.db.Paradas.insertOne(data);
         if(insertion.insertedId){
             return this.db.Paradas.findOne({'_id': new ObjectId(insertion.insertedId)});
