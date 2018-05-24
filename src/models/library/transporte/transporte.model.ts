@@ -6,5 +6,6 @@ export interface Transporte {
     model?: string,
     year?: string,
     licPlate?: string,
-    vehType?: string
+    vehType?: string,
+    active?: boolean
 }

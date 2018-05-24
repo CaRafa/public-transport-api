@@ -139,7 +139,8 @@ const run = async () =>{
                   year: req.body.year,
                   route: req.body.route,
                   licPlate: req.body.placa,
-                  vehType: req.body.t_type
+                  vehType: req.body.t_type,
+                  active: req.body.active
                 };
               }
               else{
@@ -249,6 +250,7 @@ const run = async () =>{
             
             tran = {
               description:  req.body.description !== undefined ? req.body.description : old.description,
+              active:  req.body.active !== undefined ? req.body.active : old.active,
               route:  (req.body.route.length > 0) ? req.body.route : old.route}
 
                result = await transporte.update(req.params.transporte_id, tran);
