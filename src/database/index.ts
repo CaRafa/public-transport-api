@@ -3,7 +3,7 @@ import {
     Parada,
     Ruta,
     Transporte,
-    Conductor
+    Propietario
 } from '../models/library';
 import { Collection } from 'mongodb';
 
@@ -13,6 +13,6 @@ export interface Database {
     Paradas: Collection<Parada>
     Rutas: Collection<Ruta>
     Transportes: Collection<Transporte>
-    Conductores: Collection<Conductor>
+    Propietarios: Collection<Propietario>
 
 }

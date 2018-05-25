@@ -5,9 +5,9 @@
   import { ParadaRepo } from './repositories/parada.repo';
   import { RutaRepo } from './repositories/ruta.repo';
   import { TransporteRepo } from './repositories/transporte.repo';
-  import { ConductorRepo } from './repositories/conductor.repo';
+  import { PropietarioRepo } from './repositories/propietario.repo';
   import { Db, MongoClient } from 'mongodb';
-  import {  Conductor, Genre, Parada, Ruta, Transporte } from './models/library';
+  import {  Propietario, Genre, Parada, Ruta, Transporte } from './models/library';
   import * as mcache from 'memory-cache';
 
 //Creamos el objeto api, que representará la API RESTful
@@ -25,7 +25,7 @@ const run = async () =>{
     Paradas: mongo.collection<Parada>('parada'),
     Rutas: mongo.collection<Ruta>('ruta'),
     Transportes: mongo.collection<Transporte>('transporte'),
-    Conductores: mongo.collection<Conductor>('conductor'),
+    Propietarios: mongo.collection<Propietario>('propietario'),
 
   }
 
@@ -35,7 +35,7 @@ const run = async () =>{
     const parada = new ParadaRepo(db);
     const ruta = new RutaRepo(db);
     const transporte = new TransporteRepo(db);
-    const conductor = new ConductorRepo(db);
+    const propietario = new PropietarioRepo(db);
  
   //Puerto a usar para servir el backend de forma local
     const port = 3000;
@@ -140,7 +140,9 @@ const run = async () =>{
                   route: req.body.route,
                   licPlate: req.body.placa,
                   vehType: req.body.t_type,
-                  active: req.body.active
+                  active: req.body.active,
+                  seats: req.body.seats,
+                  color: req.body.color
                 };
               }
               else{
@@ -167,22 +169,20 @@ const run = async () =>{
         })
 
   
-        api.express.route('/api/conductor')
+        api.express.route('/api/propietario')
         .post(async function(req, res){
           if(req.body.ci ){
-                let con: Conductor;
+                let con: Propietario;
                 con =  {
                   name: req.body.name,
                   lastName: req.body.lastName,
                   ci: req.body.ci,
                   transports: req.body.tran,
-                  license: req.body.licencia,
                   birthday: req.body.fN,
-                  cell: req.body.tel,
-                  status: req.body.status
+                  cell: req.body.tel
                 };
               
-              let result = await conductor.create(con);
+              let result = await propietario.create(con);
               res.status(201).json({
                 message: 'Ruta creada',
                 con: result
@@ -192,38 +192,37 @@ const run = async () =>{
             res.status(422).json({message:'Missing parameters'});
           } 
         }).get( async function(req, res){ 
-          let result = await conductor.getAll();
+          let result = await propietario.getAll();
           res.status(200).json({
             message: 'conductores buscados',
             conductor: result
           });
         })
 
-        api.express.route('/api/conductor/:conductor_id')
+        api.express.route('/api/propietario/:propietario_id')
         .put(async function(req, res){ 
 
           if(!req.body.horario && req.body.data == false){
               res.status(422).json({message:'Missing parameters'});
             }
           else{
-            let old: Conductor = await conductor.get(req.params.conductor_id);
+            let old: Propietario = await propietario.get(req.params.propietario_id);
 
             
-            let cond: Conductor
+            let cond: Propietario
             let result
             if(req.body.data == false){
-             cond = {
-              schedule: typeof req.body.horario !== "undefined" ? req.body.horario : old.schedule
-            };
+            //  cond = {
+            //   schedule: typeof req.body.horario !== "undefined" ? req.body.horario : old.schedule
+            // };
           
-             result = await conductor.update(req.params.conductor_id, cond);
+            //  result = await conductor.update(req.params.conductor_id, cond);
           }else if(req.body.data == true ){
               cond = {
                 cell:  req.body.tel !== undefined ? req.body.tel : old.cell,
-                transports:  (req.body.tran.length > 0) ? req.body.tran : old.transports,
-                status:  req.body.status !== undefined ? req.body.status : old.status}
+                transports:  (req.body.tran.length > 0) ? req.body.tran : old.transports}
 
-               result = await conductor.update(req.params.conductor_id, cond);
+               result = await propietario.update(req.params.propietario_id, cond);
             }
             else{
               result = 'nada'
@@ -238,28 +237,42 @@ const run = async () =>{
 
         api.express.route('/api/tranporte/:transporte_id')
         .put(async function(req, res){ 
-          if(!req.body.des && !req.body.route){
-              res.status(422).json({message:'Missing parameters'});
-            }
-          else{
+          // if(!req.body.des && !req.body.route){
+          //     res.status(422).json({message:'Missing parameters'});
+          //   }
+          // else{
             let old: Transporte = await transporte.get(req.params.transporte_id);
 
             
             let tran: Transporte
             let result
-            
-            tran = {
-              description:  req.body.description !== undefined ? req.body.description : old.description,
-              active:  req.body.active !== undefined ? req.body.active : old.active,
-              route:  (req.body.route.length > 0) ? req.body.route : old.route}
 
-               result = await transporte.update(req.params.transporte_id, tran);
+            console.log('solicitud', req.body);
+            if(req.body.data == false){
+              tran = {
+                schedule: typeof req.body.horario !== "undefined" ? req.body.horario : old.schedule}
+  
+                 result = await transporte.update(req.params.transporte_id, tran);
+              
+            }else if(req.body.data == true ){
+              tran = {
+                description:  req.body.description !== undefined ? req.body.description : old.description,
+                active:  req.body.active !== undefined ? req.body.active : old.active,
+                route:  (req.body.route.length > 0) ? req.body.route : old.route}
+  
+                 result = await transporte.update(req.params.transporte_id, tran);
+              }
+              else{
+                result = 'nada'
+              }
+            
+           
             
             res.status(200).json({
               message: 'transporte actualizado',
               trans: result
             });
-          } 
+          // } 
         })
 
         api.express.route('/api/ruta/:ruta_id')

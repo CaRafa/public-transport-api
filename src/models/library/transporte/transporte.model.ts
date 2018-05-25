@@ -1,11 +1,14 @@
 export interface Transporte {
     _id?: string,
     number?: number,
+    seats?: number,
     description?: string,
+    color?: string,
     route?: any,
     model?: string,
     year?: string,
     licPlate?: string,
     vehType?: string,
-    active?: boolean
+    active?: boolean,
+    schedule?: any
 }
