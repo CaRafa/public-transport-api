@@ -10,5 +10,6 @@ export interface Transporte {
     licPlate?: string,
     vehType?: string,
     active?: boolean,
-    schedule?: any
+    schedule?: any,
+    owner?: any
 }

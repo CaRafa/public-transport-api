@@ -237,10 +237,7 @@ const run = async () =>{
 
         api.express.route('/api/tranporte/:transporte_id')
         .put(async function(req, res){ 
-          // if(!req.body.des && !req.body.route){
-          //     res.status(422).json({message:'Missing parameters'});
-          //   }
-          // else{
+          
             let old: Transporte = await transporte.get(req.params.transporte_id);
 
             
@@ -262,7 +259,10 @@ const run = async () =>{
                  result = await transporte.update(req.params.transporte_id, tran);
               }
               else{
-                result = 'nada'
+                tran = {
+                  owner:  req.body.owner !== undefined ? req.body.owner : old.owner}
+    
+                   result = await transporte.update(req.params.transporte_id, tran);
               }
             
            
