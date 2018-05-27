@@ -15,7 +15,7 @@ export class ParadaRepo {
 
     public async getAll(): Promise <Parada[] | null>{
         if(this.db){
-            console.log('EXISTE BDD');
+             
         }
 
         return this.db.Paradas.find().toArray();

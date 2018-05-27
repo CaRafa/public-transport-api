@@ -16,7 +16,7 @@ export class RutaRepo {
     public async getAll(): Promise <Ruta[] | null>{
         console.log('LLAMADA A GET ALL');
         if(this.db){
-            console.log('EXISTE BDD');
+             
         }
 
         return this.db.Rutas.find().toArray();

@@ -15,7 +15,7 @@ export class PropietarioRepo {
 
     public async getAll(): Promise <Propietario[] | null>{
         if(this.db){
-            console.log('EXISTE BDD');
+             
         }
 
         return this.db.Propietarios.find().toArray();

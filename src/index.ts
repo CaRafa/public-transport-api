@@ -6,8 +6,9 @@
   import { RutaRepo } from './repositories/ruta.repo';
   import { TransporteRepo } from './repositories/transporte.repo';
   import { PropietarioRepo } from './repositories/propietario.repo';
+  import { EstadisticaRepo } from './repositories/estadistica.repo';
   import { Db, MongoClient } from 'mongodb';
-  import {  Propietario, Genre, Parada, Ruta, Transporte } from './models/library';
+  import {  Propietario, Genre, Parada, Ruta, Transporte, Estadistica } from './models/library';
   import * as mcache from 'memory-cache';
 
 //Creamos el objeto api, que representará la API RESTful
@@ -26,6 +27,7 @@ const run = async () =>{
     Rutas: mongo.collection<Ruta>('ruta'),
     Transportes: mongo.collection<Transporte>('transporte'),
     Propietarios: mongo.collection<Propietario>('propietario'),
+    Estadisticas: mongo.collection<Estadistica>('estadistica'),
 
   }
 
@@ -36,6 +38,7 @@ const run = async () =>{
     const ruta = new RutaRepo(db);
     const transporte = new TransporteRepo(db);
     const propietario = new PropietarioRepo(db);
+    const estadistica = new EstadisticaRepo(db);
  
   //Puerto a usar para servir el backend de forma local
     const port = 3000;
@@ -129,7 +132,6 @@ const run = async () =>{
 
         api.express.route('/api/transporte')
         .post(async function(req, res){
-          if(req.body.route ){
               let tran: Transporte;
               if(req.body.numero){
                 tran =  {
@@ -137,7 +139,6 @@ const run = async () =>{
                   description: req.body.description,
                   model: req.body.modelo,
                   year: req.body.year,
-                  route: req.body.route,
                   licPlate: req.body.placa,
                   vehType: req.body.t_type,
                   active: req.body.active,
@@ -147,7 +148,15 @@ const run = async () =>{
               }
               else{
                 tran =  {
-                  route : req.body.route,
+                  number: req.body.numero,
+                  description: req.body.description,
+                  model: req.body.modelo,
+                  year: req.body.year,
+                  licPlate: req.body.placa,
+                  vehType: req.body.t_type,
+                  active: req.body.active,
+                  seats: req.body.seats,
+                  color: req.body.color
                 };
               }
         
@@ -156,10 +165,7 @@ const run = async () =>{
                 message: 'Ruta creada',
                 tran: result
               });
-          }
-          else{
-            res.status(422).json({message:'Missing parameters'});
-          } 
+         
         }).get( async function(req, res){ 
           let result = await transporte.getAll();
           res.status(200).json({
@@ -307,6 +313,107 @@ const run = async () =>{
           } 
         })
 
+        api.express.route('/api/estadistica')
+        .post(async function(req, res){ 
+
+              let est: Estadistica;
+              
+              est =  {
+                nTransActive: req.body.nTransActive,
+                nTransOut: req.body.nTransOut,
+                nRutas: req.body.nRutas,
+                nParadas: req.body.nParadas,
+                };
+              
+             
+            
+              let result = await estadistica.create(est);
+              res.status(201).json({
+                message: 'Parada creada',
+                est: result
+              });
+          
+          
+        })
+
+        api.express.route('/api/estadistica/:estadistica_id')
+        .put(async function(req, res){
+
+            let old: Estadistica = await estadistica.get(req.params.estadistica_id);
+
+            
+            let est: Estadistica
+            let result
+            if(req.body.nRutas){
+              var number = ( parseInt(old.nRutas +req.body.nRutas))
+              console.log('',number);
+              est = {
+                nTransActive:  req.body.nTransActive !== undefined ? (old.nTransActive + req.body.nTransActive) : old.nTransActive,
+                nTransOut:  req.body.nTransOut !== undefined ? (old.nTransOut + req.body.nTransOut) : old.nTransOut,
+                nRutas:  req.body.nRutas !== undefined ? number: old.nRutas,
+                nParadas:  req.body.nParadas !== undefined ? (old.nParadas + req.body.nParadas) : old.nParadas,
+                
+                }
+            }else if(req.body.nParadas){
+              var number = ( parseInt(old.nParadas +req.body.nParadas))
+              console.log('',number);
+              est = {
+                nParadas:  req.body.nParadas !== undefined ? number : old.nParadas,
+                
+                }
+            }else if(req.body.nTransActive && req.body.flag == false){
+              var number = ( parseInt(old.nTransActive +req.body.nTransActive))
+              console.log('',number);
+              est = {
+                nTransActive:  req.body.nTransActive !== undefined ?number: old.nTransActive,
+                
+                }
+            }
+            else if(req.body.nTransActive && req.body.flag == true){
+              var resOut = ( parseInt(old.nTransOut + (-req.body.nTransActive)))
+              var sumAct  = ( parseInt(old.nTransActive + (req.body.nTransActive) ) )
+              console.log('',sumOut, resAct);
+              est = {
+                nTransActive:  req.body.nTransActive !== undefined ? sumAct : old.nTransActive,
+                nTransOut:  req.body.nTransActive !== undefined ? resOut : old.nTransOut,
+
+                }
+            }
+            else if(req.body.nTransOut){
+              var sumOut = ( parseInt(old.nTransOut + req.body.nTransOut))
+              var resAct  = ( parseInt(old.nTransActive + ( -req.body.nTransOut) ) )
+              console.log('',sumOut, resAct);
+              est = {
+                nTransActive:  req.body.nTransOut !== undefined ? resAct : old.nTransActive,
+                nTransOut:  req.body.nTransOut !== undefined ? sumOut : old.nTransOut,
+
+                }
+            }
+            
+
+               result = await estadistica.update(req.params.estadistica_id, est);
+            
+            
+            res.status(200).json({
+              message: 'estadisticas actualizada',
+              est: result
+            });
+          
+        }).get( async function(req, res){ //Operador para buscar un libro específico
+          //Se busca en la base de datos el libro especificado
+          let result = await estadistica.get(req.params.estadistica_id);
+
+          //Se retorna el libro que fue buscado
+          res.status(200).json({
+            message: 'Estadistica buscada',
+            est: result
+          });
+        })
+
+
+
+
+
     api.express.listen(port, (err) => {
 
       if (err) {
@@ -319,6 +426,7 @@ const run = async () =>{
 
 
 }
+
 
 
 

@@ -16,7 +16,7 @@ export class TransporteRepo {
     public async getAll(): Promise <Transporte[] | null>{
         console.log('LLAMADA A GET ALL');
         if(this.db){
-            console.log('EXISTE BDD');
+             
         }
 
         return this.db.Transportes.find().toArray();
