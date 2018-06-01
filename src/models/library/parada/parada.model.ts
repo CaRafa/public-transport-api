@@ -4,6 +4,5 @@ export interface Parada {
     title?: string,
     terminal?: boolean,
     description?: string,
-    coordinates?: any,
-    density?: string
+    coordinates?: any
 }

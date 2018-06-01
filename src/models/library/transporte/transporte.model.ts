@@ -4,7 +4,6 @@ export interface Transporte {
     seats?: number,
     description?: string,
     color?: string,
-    route?: any,
     model?: string,
     year?: string,
     licPlate?: string,

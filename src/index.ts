@@ -66,8 +66,7 @@ const run = async () =>{
                   title: req.body.title,
                   coordinates : req.body.coordinates,
                   description : req.body.description,
-                  terminal:  req.body.type,
-                  density: req.body.density
+                  terminal:  req.body.type
                 };
               
              
@@ -133,7 +132,7 @@ const run = async () =>{
         api.express.route('/api/transporte')
         .post(async function(req, res){
               let tran: Transporte;
-              if(req.body.numero){
+              if(req.body.numero && req.body.owner){
                 tran =  {
                   number: req.body.numero,
                   description: req.body.description,
@@ -143,7 +142,8 @@ const run = async () =>{
                   vehType: req.body.t_type,
                   active: req.body.active,
                   seats: req.body.seats,
-                  color: req.body.color
+                  color: req.body.color,
+                  owner: req.body.owner
                 };
               }
               else{
@@ -162,7 +162,7 @@ const run = async () =>{
         
               let result = await transporte.create(tran);
               res.status(201).json({
-                message: 'Ruta creada',
+                message: 'tranporte creada',
                 tran: result
               });
          
